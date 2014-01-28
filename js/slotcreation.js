@@ -15,7 +15,7 @@
         $(".slot1").attr("data-description", data.description);
         $(".time-input-mod").show();
       } else { 
-        $("#slot1").html("<button>Try Again?</button>") 
+        $("#slot1").html("<button>Try Again?</button>");
       }
     }
 
@@ -64,6 +64,7 @@
           $("#slot1 button").on('click', function(start, end){
             playSlot('slot1', start, end);
           });
+          $("#slot1 button").text("Play"); 
 
           return false;
         });
