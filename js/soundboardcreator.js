@@ -15,32 +15,27 @@ var moveToHugeSlot = function (slot) {
 }
 
 var playSlot = function(slot, start, end) {
-  console.log('playing slot', document.getElementsByClassName(slot)[0]);
-  var embed = document.getElementsByClassName(slot)[0].firstElementChild.contentWindow;
-  var embedDomain = 'http://cdn.embedly.com';
-  
-  // set up a listener so we can hear about events happening with the embed
-  embed.postMessage(JSON.stringify({
-    method: 'addEventListener',
-    value: 'playProgress'
-  }), embedDomain);
-
+  console.log('playing slot shit', slot);
+  console.log('slot:', $('.' + slot + ' iframe')[0])
   // set the duration and start playing
-  embed.postMessage(JSON.stringify({
-    method: 'setCurrentTime',
-    value: start
-  }), embedDomain);
-  embed.postMessage(JSON.stringify({
-    method: 'play'
-  }), embedDomain);
+  player = new playerjs.Player($('.' + slot + ' iframe')[0]);
 
-  // stop the embed once we hit our end time
-  window.setTimeout(function () {
-    console.log('setTimeout pausing', (end - start) * 1000, slot);
-    embed.postMessage(JSON.stringify({
-      method: 'pause'
-    }), embedDomain);
-  }, (end - start) * 1000);
+  player.on('ready', function(){
+    console.log("ready to play:" + slot)
+    player.setCurrentTime(start);
+    player.on('play', function(){
+      // stop the embed once we hit our end time
+      window.setTimeout(function () {
+        console.log('setTimeout pausing', (end - start) * 1000, slot);
+        player.pause();
+      }, (end - start) * 1000);
+    }, this);
+    player.play();
+
+
+  });
+
+  window.player = player;
 }
 
 $(document).ready(function () {
@@ -98,6 +93,7 @@ $(document).ready(function () {
           var url = $input.val();
 
           //do something with data
+          $(".slot1").attr("data-url", url);
           data = callEmbedly(url, createSlot);
           
           return false;
@@ -133,6 +129,18 @@ $(document).ready(function () {
         });
     }
 
+    var saveBoard = function () {
+      var hash = '#';
+      for (var i=1;i<4;i++) {
+        var time = $('#slot' + i).attr("data-start") 
+                + ":" + $('#slot1').attr("data-end");
+        //$('#slot1').attr("data-url") || 
+        hash += btoa(encodeURIComponent('http://vimeo.com')+ ";" + time) + ',';
+      }
+      alert(hash);
+    }
+
     addURL($("#url-input"),$(".button",".url-input-mod"));
     addTime($("#time-input-1"),$("#time-input-2"),$(".button",".time-input-mod"));
+    $(".save-mod button").on('click', saveBoard);
 });
