@@ -1,11 +1,17 @@
 ;(function ( $, window, document, undefined ) {
   $(document).ready(function () {
 
-    var callEmbedly = function (url) {
-      var call = "http://api.embed.ly/1/oembed?url=";
-      $.getJSON(call + encodeURIComponent(url) + "&callback=?", function(data) {
-        alert(data);     
-      });
+    var callEmbedly = function (url, cb) {
+      var call = "http://api.embed.ly/1/oembed?scheme=http&url=";
+      $.getJSON(call + encodeURIComponent(url) + "&callback=?", cb);
+    }
+
+    var createSlot = function (data) {
+      if (data.html) {
+        $("#slot1").html(data.html + "<button>Play</button>");
+      } else { 
+        $("#slot1").html("Try Again?") 
+      }
     }
 
     // adds URL data from Embedly
@@ -26,7 +32,8 @@
           var url = $input.val();
 
           //do something with data
-          data = callEmbedly(url);
+          data = callEmbedly(url, createSlot);
+          
           return false;
         });
       }
