@@ -1,9 +1,9 @@
 <html>
   <head>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/2.1.3/normalize.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.3/css/foundation.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
-    <script src="//cdn.embed.ly/player-0.0.6.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/2.1.3/normalize.min.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.3/css/foundation.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
+    <script src="http://cdn.embed.ly/player-0.0.6.js"></script>
   </head>
   <body>
     <div id="soundboard">
@@ -42,6 +42,43 @@
           <a class="embedly-card" href="http://www.youtube.com/watch?v=cSWC1prAmXw">Golazo De Neymar Vs Flamengo.</a>
           <script>!function(a){var b="embedly-platform",c="script";if(!a.getElementById(b)){var d=a.createElement(c);d.id=b,d.src=("https:"===document.location.protocol?"https":"http")+"://cdn.embedly.com/widgets/platform.js";var e=document.getElementsByTagName(c)[0];e.parentNode.insertBefore(d,e)}}(document);</script>
           </div>
+
+
+          <!-- Add Video forms -->
+          
+          <!-- Add URL form -->
+              <div class="row url-input-mod">
+                  <form>
+                  <div class="row">
+                    <div class="small-10 columns">
+                       <label>URL</label>
+                       <input type="text" id="url-input" placeholder="Enter URL.." />
+                    </div>
+                    <div class="small-2 columns">
+                      <a href="#" class="button">Add</a>
+                    </div>
+                  </div>
+                  </form>
+              </div>
+
+              <div class="row time-input-mod hide">
+                  <form>
+                  <div class="row">
+                    <div class="small-4 columns">
+                      <label>Start</label>
+                      <input id="time-input-1" type="text" placeholder="Start time(s).." />
+                    </div>
+                    <div class="small-4 columns">
+                      <label>End</label>
+                      <input id="time-input-2" type="text" placeholder="End time(s).." />
+                    </div>
+                    <div class="small-2 columns">
+                      <a href="#" class="button">Add</a>
+                    </div>
+                  </div>
+                  </form>
+              </div>
+
         </div>
         <div id="slot6" class="large-3 columns slot">
           <button>Play</button>
@@ -62,8 +99,8 @@
         </div>
       </div>
     </div>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.0.3/js/foundation.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/foundation/5.0.3/js/foundation.min.js"></script>
     <script src="js/soundboardcreator.js"></script>
     <script>
       $(document).foundation();
