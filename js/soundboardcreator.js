@@ -1,27 +1,28 @@
 var setupButtonListeners = function () {
   $('button').each(function (index) {
     this.addEventListener('click', function () {
-      console.log('clicked', this.parentNode.id)
       moveToHugeSlot(this.parentNode)
     });
   });
 }
 
 var moveToHugeSlot = function (slot) {
-  console.log('move to huge slot', slot, slot.childNodes);
-
-  var home = $('#huge-slot').attr('home-slot');
-  console.log('home slot', home)
+  console.log('move to huge slot', slot.id);
+  $('.huge-slot').each(function () {
+    $(this).hide()
+  });
+  $('.' + slot.id).show();  
 }
 
-var playById = function(id, start, end) {
-  var embed = document.getElementById(id).contentWindow;
+var playSlot = function(slot, start, end) {
+  console.log('playing slot', document.getElementsByClassName(slot)[0]);
+  var embed = document.getElementsByClassName(slot)[0].firstElementChild.contentWindow;
   var embedDomain = 'http://cdn.embedly.com';
   
   // set up a listener so we can hear about events happening with the embed
   embed.postMessage(JSON.stringify({
     method: 'addEventListener',
-    value: 'event'
+    value: 'playProgress'
   }), embedDomain);
 
   // set the duration and start playing
@@ -35,7 +36,7 @@ var playById = function(id, start, end) {
 
   // stop the embed once we hit our end time
   window.setTimeout(function () {
-    console.log('setTimeout pausing', (end - start) * 1000, id);
+    console.log('setTimeout pausing', (end - start) * 1000, slot);
     embed.postMessage(JSON.stringify({
       method: 'pause'
     }), embedDomain);
@@ -44,6 +45,10 @@ var playById = function(id, start, end) {
 
 $(document).ready(function () {
   setupButtonListeners();
+
+  $('.huge-slot').each(function () {
+    $(this).hide()
+  });
   
   window.addEventListener('message', function (a, b, c) {
     console.log('window message listener', a, b, c)
