@@ -1,10 +1,18 @@
-window.addEventListener('message', function (a, b, c) {
-  console.log('window message listener', a, b, c)
-})
+var setupButtonListeners = function () {
+  $('button').each(function (index) {
+    this.addEventListener('click', function () {
+      console.log('clicked', this.parentNode.id)
+      moveToHugeSlot(this.parentNode)
+    });
+  });
+}
 
-window.setTimeout(function () {
-  console.log(document.getElementsByTagName('iframe')[0].id)
-}, 1000);
+var moveToHugeSlot = function (slot) {
+  console.log('move to huge slot', slot, slot.childNodes);
+
+  var home = $('#huge-slot').attr('home-slot');
+  console.log('home slot', home)
+}
 
 var playById = function(id, start, end) {
   var embed = document.getElementById(id).contentWindow;
@@ -33,3 +41,15 @@ var playById = function(id, start, end) {
     }), embedDomain);
   }, (end - start) * 1000);
 }
+
+$(document).ready(function () {
+  setupButtonListeners();
+  
+  window.addEventListener('message', function (a, b, c) {
+    console.log('window message listener', a, b, c)
+  })
+
+  window.setTimeout(function () {
+    console.log(document.getElementsByTagName('iframe')[0].id)
+  }, 1000);
+});
