@@ -8,7 +8,12 @@
 
     var createSlot = function (data) {
       if (data.html) {
+        //slot1 should be removed for something generic
         $("#slot1").html(data.html + "<button>Play</button>");
+        $("#slot1").attr("data-html", data.html);
+        $("#slot1").attr("data-title", data.title);
+        $("#slot1").attr("data-description", data.description);
+        $(".time-input-mod").show();
       } else { 
         $("#slot1").html("Try Again?") 
       }
@@ -53,7 +58,8 @@
           var end = $input2.val();
 
           //load into slot on page
-          alert("Start:" + start + " to End:" + end);
+          $("#slot1").attr("data-start", start);
+          $("#slot1").attr("data-end", end);
           return false;
         });
     }
