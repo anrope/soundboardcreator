@@ -57,9 +57,14 @@
           var start = $input1.val();
           var end = $input2.val();
 
-          //load into slot on page
+          //load data into slot div
           $("#slot1").attr("data-start", start);
           $("#slot1").attr("data-end", end);
+          
+          $("#slot1 button").on('click', function(start, end){
+            playSlot('slot1', start, end);
+          });
+
           return false;
         });
     }
