@@ -2,20 +2,20 @@
   $(document).ready(function () {
 
     var callEmbedly = function (url, cb) {
-      var call = "http://api.embed.ly/1/oembed?scheme=http&url=";
+      var call = "http://api.embed.ly/1/oembed?width=600&scheme=http&url=";
       $.getJSON(call + encodeURIComponent(url) + "&callback=?", cb);
     }
 
     var createSlot = function (data) {
       if (data.html) {
         //slot1 should be removed for something generic
-        $("#slot1").html(data.html + "<button>Play</button>");
-        $("#slot1").attr("data-html", data.html);
-        $("#slot1").attr("data-title", data.title);
-        $("#slot1").attr("data-description", data.description);
+        $(".slot1").html(data.html);
+        $(".slot1").attr("data-html", data.html);
+        $(".slot1").attr("data-title", data.title);
+        $(".slot1").attr("data-description", data.description);
         $(".time-input-mod").show();
       } else { 
-        $("#slot1").html("Try Again?") 
+        $("#slot1").html("<button>Try Again?</button>") 
       }
     }
 
@@ -58,8 +58,8 @@
           var end = $input2.val();
 
           //load data into slot div
-          $("#slot1").attr("data-start", start);
-          $("#slot1").attr("data-end", end);
+          $(".slot1").attr("data-start", start);
+          $(".slot1").attr("data-end", end);
           
           $("#slot1 button").on('click', function(start, end){
             playSlot('slot1', start, end);
