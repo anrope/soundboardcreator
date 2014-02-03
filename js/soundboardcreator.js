@@ -1,9 +1,21 @@
 var setupButtonListeners = function () {
-  $('button').each(function (index) {
+  $('.slot button').each(function (index) {
     this.addEventListener('click', function () {
-      moveToHugeSlot(this.parentNode)
+      setCurrentSlot(this.parentNode)
     });
   });
+}
+
+var setCurrentSlot = function(slot) {
+  console.log("current slot:" + slot.id)
+  window.current_slot = slot.id;
+  var data_slot = $('.' + slot.id)[0];
+  if (data_slot.hasAttribute('data-url')) {
+    return false; 
+  } else {
+      $(".url-input-mod").show();
+  }
+  return false;
 }
 
 var moveToHugeSlot = function (slot) {
@@ -15,27 +27,35 @@ var moveToHugeSlot = function (slot) {
 }
 
 var playSlot = function(slot, start, end) {
-  console.log('playing slot shit', slot);
-  console.log('slot:', $('.' + slot + ' iframe')[0])
+  //manage slot players
+  if (!window.players) {
+  window.players = {}; }
+
   // set the duration and start playing
-  player = new playerjs.Player($('.' + slot + ' iframe')[0]);
+  if (!$("." + slot)[0].hasAttribute('data-iframe')) {
+    //set slot player
+    window.players[slot] = new playerjs.Player($('.' + slot + ' iframe')[0]);
+    $("." + slot).attr("data-iframe", true);
 
-  player.on('ready', function(){
-    console.log("ready to play:" + slot)
-    player.setCurrentTime(start);
-    player.on('play', function(){
-      // stop the embed once we hit our end time
-      window.setTimeout(function () {
-        console.log('setTimeout pausing', (end - start) * 1000, slot);
-        player.pause();
-      }, (end - start) * 1000);
-    }, this);
-    player.play();
+    window.players[slot].on('ready', function(){
+      console.log("ready to play:" + slot + ":start,end:" + start + "," + end)
+      window.players[slot].setCurrentTime(parseFloat(start));
+      window.players[slot].on('play', function(){
+        // stop the embed once we hit our end time
+        window.setTimeout(function () {
+          console.log('setTimeout pausing', (end - start) * 1000, slot);
+          window.players[slot].pause();
+          $('.' + slot).hide();
+        }, (end - start) * 1000);
+      }, this);
 
-
+      window.players[slot].play();
   });
-
-  window.player = player;
+  }
+  else {
+    window.players[slot].setCurrentTime(parseFloat(start));
+    window.players[slot].play();
+  }
 }
 
 $(document).ready(function () {
@@ -49,29 +69,26 @@ $(document).ready(function () {
     console.log('window message listener', a, b, c)
   })
 
-  window.setTimeout(function () {
-    console.log(document.getElementsByTagName('iframe')[0].id)
-  }, 1000);
 
   /////////////////
   //Slot Creation
   ///////////////
     var callEmbedly = function (url, cb) {
-      var call = "http://api.embed.ly/1/oembed?width=600&scheme=http&url=";
+      var call = "http://api.embed.ly/1/oembed?width=400&scheme=http&url=";
       $.getJSON(call + encodeURIComponent(url) + "&callback=?", cb);
     }
 
     var createSlot = function (data) {
       if (data.html) {
         //slot1 should be removed for something generic
-        $(".slot1").html(data.html);
-        $(".slot1").attr("data-html", data.html);
-        $(".slot1").attr("data-title", data.title);
-        $(".slot1").attr("data-description", data.description);
+        $("." + window.current_slot).html(data.html);
+        $("." + window.current_slot).attr("data-html", data.html);
+        $("." + window.current_slot).attr("data-title", data.title);
+        $("." + window.current_slot).attr("data-description", data.description);
         $(".url-input-mod").hide();
         $(".time-input-mod").show();
       } else { 
-        $("#slot1").html("<button>Try Again?</button>");
+        $("." + window.current_slot).html("<button>Try Again?</button>");
       }
     }
 
@@ -83,17 +100,12 @@ $(document).ready(function () {
           $(this).attr("enabled", true);
         })
 
-        $(document).keypress(function(e) {
-          if(e.which == 13) {
-            $button.click();
-          }
-        });
-
         $button.on('click', function(){
           var url = $input.val();
-
+          $input.val("");
           //do something with data
-          $(".slot1").attr("data-url", url);
+          console.log("current slot: " + window.current_slot)
+          $("." + window.current_slot).attr("data-url", url);
           data = callEmbedly(url, createSlot);
           
           return false;
@@ -104,24 +116,22 @@ $(document).ready(function () {
     // Adds start, end time from user
     var addTime = function($input1, $input2, $button){
 
-        $(document).keypress(function(e) {
-          if(e.which == 13) {
-            $button.click();
-          }
-        });
-
         $button.on('click', function(){
           var start = $input1.val();
           var end = $input2.val();
+          $input1.val("");
+          $input2.val("");
 
           //load data into slot div
-          $(".slot1").attr("data-start", start);
-          $(".slot1").attr("data-end", end);
-          
-          $("#slot1 button").on('click', function(start, end){
-            playSlot('slot1', start, end);
+          $("." + window.current_slot).attr("data-start", start);
+          $("." + window.current_slot).attr("data-end", end);
+
+          //onclick
+          $("#" + window.current_slot + " button").on('click', function(){
+            moveToHugeSlot(this.parentNode);
+            playSlot(window.current_slot, start, end);
           });
-          $("#slot1 button").text(  "Play"); 
+          $("#" + window.current_slot + " button").text(  "Play"); 
           
           $(".time-input-mod").hide();
 
@@ -129,17 +139,9 @@ $(document).ready(function () {
         });
     }
 
-    var saveBoard = function () {
-      var hash = '#';
-      for (var i=1;i<4;i++) {
-        var time = $('#slot' + i).attr("data-start") 
-                + ":" + $('#slot1').attr("data-end");
-        //$('#slot1').attr("data-url") || 
-        hash += btoa(encodeURIComponent('http://vimeo.com')+ ";" + time) + ',';
-      }
-      alert(hash);
-    }
-
+    //setup forms
+    var current_slot;
+    var players;
     addURL($("#url-input"),$(".button",".url-input-mod"));
     addTime($("#time-input-1"),$("#time-input-2"),$(".button",".time-input-mod"));
     $(".save-mod button").on('click', saveBoard);
